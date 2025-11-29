@@ -24,18 +24,18 @@
         <!-- Navegação -->
         <nav class="main-nav" id="main-nav">
           <ul>
-            <li><a href="index.html">Início</a></li>
-            <li><a href="masculino.html">Masculino</a></li>
-            <li><a href="feminino.html">Feminino</a></li>
-            <li><a href="infantil.html">Infantil</a></li>
-            <li><a href="ofertas.html">Ofertas</a></li>
+            <li><a href="#produtos" class="nav-link">Início</a></li>
+            <li><a href="#masculino" class="nav-link">Masculino</a></li>
+            <li><a href="#feminino" class="nav-link">Feminino</a></li>
+            <li><a href="#infantil" class="nav-link">Infantil</a></li>
+            <li><a href="#ofertas" class="nav-link">Ofertas</a></li>
           </ul>
         </nav>
 
         <div class="search-cart">
           <div class="search-box">
-            <input type="text" placeholder="Buscar produtos..." />
-            <button>🔍</button>
+            <input type="text" id="search-input" placeholder="Buscar produtos..." />
+            <button id="search-button">🔍</button>
           </div>
           <a href="carrinho.html" class="cart-icon">
             🛒 <span class="cart-count">0</span>
@@ -81,17 +81,8 @@
     <main class="container">
       <!-- Filtros e Categorias -->
       <section class="filters">
-        <div class="categories">
-          <button class="category-btn active" data-category="all">Todos</button>
-          <button class="category-btn" data-category="masculino">
-            Masculino
-          </button>
-          <button class="category-btn" data-category="feminino">
-            Feminino
-          </button>
-          <button class="category-btn" data-category="infantil">
-            Infantil
-          </button>
+        <div class="categories" id="categories-container">
+          <!-- As categorias serão carregadas dinamicamente aqui -->
         </div>
         <div class="sort-options">
           <select id="sort-by">
@@ -120,17 +111,15 @@
           <div class="footer-column">
             <h3>Links Rápidos</h3>
             <ul>
-              <li><a href="index.html">Início</a></li>
+              <li><a href="#produtos">Início</a></li>
               <li><a href="sobre.html">Sobre Nós</a></li>
               <li><a href="contato.html">Contato</a></li>
             </ul>
           </div>
           <div class="footer-column">
             <h3>Categorias</h3>
-            <ul>
-              <li><a href="masculino.html">Masculino</a></li>
-              <li><a href="feminino.html">Feminino</a></li>
-              <li><a href="infantil.html">Infantil</a></li>
+            <ul id="footer-categories">
+              <!-- Categorias serão carregadas dinamicamente aqui -->
             </ul>
           </div>
           <div class="footer-column newsletter">
@@ -207,6 +196,368 @@
           });
         }
       });
+
+      // Implementação das novas funcionalidades
+      document.addEventListener('DOMContentLoaded', function() {
+        // 1. Barra de pesquisa funcional
+        const searchInput = document.getElementById('search-input');
+        const searchButton = document.getElementById('search-button');
+        
+        function performSearch() {
+          const searchTerm = searchInput.value.trim();
+          if (searchTerm) {
+            // Aqui você implementaria a lógica de busca
+            // Por enquanto, vamos apenas filtrar os produtos visíveis
+            filterProductsBySearch(searchTerm);
+          } else {
+            // Se a pesquisa estiver vazia, mostrar todos os produtos
+            showAllProducts();
+          }
+        }
+        
+        searchButton.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            performSearch();
+          }
+        });
+        
+        // 2. Navegação por âncoras
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+              // Rolagem suave para a seção
+              targetElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+              });
+            }
+          });
+        });
+        
+        // 3. Carregar categorias do banco de dados
+        loadCategoriesFromDatabase();
+        
+        // 4. Carregar produtos do banco de dados
+        loadProductsFromDatabase();
+      });
+      
+      // Função para filtrar produtos por pesquisa
+      function filterProductsBySearch(searchTerm) {
+        const products = document.querySelectorAll('.product-card');
+        let foundProducts = false;
+        
+        products.forEach(product => {
+          const productName = product.querySelector('.product-name').textContent.toLowerCase();
+          const productDescription = product.querySelector('.product-description').textContent.toLowerCase();
+          const searchTermLower = searchTerm.toLowerCase();
+          
+          if (productName.includes(searchTermLower) || productDescription.includes(searchTermLower)) {
+            product.style.display = 'block';
+            foundProducts = true;
+          } else {
+            product.style.display = 'none';
+          }
+        });
+        
+        // Mostrar mensagem se nenhum produto for encontrado
+        const productsGrid = document.getElementById('products-grid');
+        let noResultsMessage = document.getElementById('no-results-message');
+        
+        if (!foundProducts) {
+          if (!noResultsMessage) {
+            noResultsMessage = document.createElement('div');
+            noResultsMessage.id = 'no-results-message';
+            noResultsMessage.className = 'no-results';
+            noResultsMessage.textContent = 'Nenhum produto encontrado para sua pesquisa.';
+            productsGrid.appendChild(noResultsMessage);
+          }
+        } else if (noResultsMessage) {
+          noResultsMessage.remove();
+        }
+      }
+      
+      // Função para mostrar todos os produtos
+      function showAllProducts() {
+        const products = document.querySelectorAll('.product-card');
+        products.forEach(product => {
+          product.style.display = 'block';
+        });
+        
+        const noResultsMessage = document.getElementById('no-results-message');
+        if (noResultsMessage) {
+          noResultsMessage.remove();
+        }
+      }
+      
+      // Função para carregar categorias do banco de dados
+      function loadCategoriesFromDatabase() {
+        // Simulação de dados do banco de dados
+        // Em uma implementação real, você faria uma requisição para seu backend
+        const categories = [
+          { id: 'all', name: 'Todos' },
+          { id: 'masculino', name: 'Masculino' },
+          { id: 'feminino', name: 'Feminino' },
+          { id: 'infantil', name: 'Infantil' },
+          { id: 'ofertas', name: 'Ofertas' }
+        ];
+        
+        // Atualizar filtros de categoria
+        const categoriesContainer = document.getElementById('categories-container');
+        categoriesContainer.innerHTML = '';
+        
+        categories.forEach(category => {
+          const button = document.createElement('button');
+          button.className = 'category-btn';
+          if (category.id === 'all') button.classList.add('active');
+          button.setAttribute('data-category', category.id);
+          button.textContent = category.name;
+          
+          button.addEventListener('click', function() {
+            // Remover classe active de todos os botões
+            document.querySelectorAll('.category-btn').forEach(btn => {
+              btn.classList.remove('active');
+            });
+            
+            // Adicionar classe active ao botão clicado
+            this.classList.add('active');
+            
+            // Filtrar produtos por categoria
+            filterProductsByCategory(category.id);
+          });
+          
+          categoriesContainer.appendChild(button);
+        });
+        
+        // Atualizar categorias no footer
+        const footerCategories = document.getElementById('footer-categories');
+        footerCategories.innerHTML = '';
+        
+        categories.forEach(category => {
+          if (category.id !== 'all') {
+            const listItem = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = `#${category.id}`;
+            link.textContent = category.name;
+            link.addEventListener('click', function(e) {
+              e.preventDefault();
+              const targetElement = document.getElementById(category.id);
+              if (targetElement) {
+                targetElement.scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'start'
+                });
+              }
+            });
+            listItem.appendChild(link);
+            footerCategories.appendChild(listItem);
+          }
+        });
+      }
+      
+      // Função para filtrar produtos por categoria
+      function filterProductsByCategory(category) {
+        const products = document.querySelectorAll('.product-card');
+        
+        products.forEach(product => {
+          const productCategory = product.getAttribute('data-category');
+          
+          if (category === 'all' || productCategory === category) {
+            product.style.display = 'block';
+          } else {
+            product.style.display = 'none';
+          }
+        });
+      }
+      
+      // Função para carregar produtos do banco de dados
+      function loadProductsFromDatabase() {
+        // Simulação de dados do banco de dados
+        // Em uma implementação real, você faria uma requisição para seu backend
+        const products = [
+          { 
+            id: 1, 
+            name: 'Camiseta Básica', 
+            description: 'Camiseta 100% algodão', 
+            price: 29.99, 
+            category: 'masculino',
+            image: 'img/produto1.jpg'
+          },
+          { 
+            id: 2, 
+            name: 'Vestido Floral', 
+            description: 'Vestido leve para o verão', 
+            price: 79.99, 
+            category: 'feminino',
+            image: 'img/produto2.jpg'
+          },
+          { 
+            id: 3, 
+            name: 'Conjunto Infantil', 
+            description: 'Conjunto confortável para crianças', 
+            price: 49.99, 
+            category: 'infantil',
+            image: 'img/produto3.jpg'
+          },
+          { 
+            id: 4, 
+            name: 'Jaqueta Jeans', 
+            description: 'Jaqueta jeans masculina', 
+            price: 99.99, 
+            category: 'masculino',
+            image: 'img/produto4.jpg'
+          },
+          { 
+            id: 5, 
+            name: 'Blusa de Tricô', 
+            description: 'Blusa feminina de tricô', 
+            price: 69.99, 
+            category: 'feminino',
+            image: 'img/produto5.jpg'
+          },
+          { 
+            id: 6, 
+            name: 'Tênis Infantil', 
+            description: 'Tênis confortável para crianças', 
+            price: 59.99, 
+            category: 'infantil',
+            image: 'img/produto6.jpg'
+          }
+        ];
+        
+        // Atualizar grid de produtos
+        const productsGrid = document.getElementById('products-grid');
+        const loading = document.getElementById('loading');
+        
+        // Esconder loading
+        loading.style.display = 'none';
+        
+        // Limpar grid
+        productsGrid.innerHTML = '';
+        
+        // Adicionar produtos ao grid
+        products.forEach(product => {
+          const productCard = document.createElement('div');
+          productCard.className = 'product-card';
+          productCard.setAttribute('data-category', product.category);
+          
+          productCard.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <div class="product-info">
+              <h3 class="product-name">${product.name}</h3>
+              <p class="product-description">${product.description}</p>
+              <div class="product-price">R$ ${product.price.toFixed(2)}</div>
+              <button class="btn add-to-cart" data-product-id="${product.id}">Adicionar ao Carrinho</button>
+            </div>
+          `;
+          
+          productsGrid.appendChild(productCard);
+        });
+        
+        // Adicionar event listeners para os botões "Adicionar ao Carrinho"
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+          button.addEventListener('click', function() {
+            const productId = parseInt(this.getAttribute('data-product-id'));
+            const product = products.find(p => p.id === productId);
+            if (product) {
+              addToCart(product);
+            }
+          });
+        });
+        
+        // Criar seções para cada categoria
+        createCategorySections(products);
+      }
+      
+      // Função para criar seções para cada categoria
+      function createCategorySections(products) {
+        const mainElement = document.querySelector('main');
+        
+        // Criar seção para Masculino
+        const masculinoSection = document.createElement('section');
+        masculinoSection.id = 'masculino';
+        masculinoSection.className = 'category-section';
+        masculinoSection.innerHTML = `
+          <h2>Masculino</h2>
+          <div class="products-grid" id="masculino-grid"></div>
+        `;
+        mainElement.appendChild(masculinoSection);
+        
+        // Criar seção para Feminino
+        const femininoSection = document.createElement('section');
+        femininoSection.id = 'feminino';
+        femininoSection.className = 'category-section';
+        femininoSection.innerHTML = `
+          <h2>Feminino</h2>
+          <div class="products-grid" id="feminino-grid"></div>
+        `;
+        mainElement.appendChild(femininoSection);
+        
+        // Criar seção para Infantil
+        const infantilSection = document.createElement('section');
+        infantilSection.id = 'infantil';
+        infantilSection.className = 'category-section';
+        infantilSection.innerHTML = `
+          <h2>Infantil</h2>
+          <div class="products-grid" id="infantil-grid"></div>
+        `;
+        mainElement.appendChild(infantilSection);
+        
+        // Criar seção para Ofertas
+        const ofertasSection = document.createElement('section');
+        ofertasSection.id = 'ofertas';
+        ofertasSection.className = 'category-section';
+        ofertasSection.innerHTML = `
+          <h2>Ofertas</h2>
+          <div class="products-grid" id="ofertas-grid"></div>
+        `;
+        mainElement.appendChild(ofertasSection);
+        
+        // Preencher cada seção com os produtos correspondentes
+        fillCategorySection('masculino', products);
+        fillCategorySection('feminino', products);
+        fillCategorySection('infantil', products);
+        fillCategorySection('ofertas', products);
+      }
+      
+      // Função para preencher uma seção de categoria com produtos
+      function fillCategorySection(category, products) {
+        const sectionGrid = document.getElementById(`${category}-grid`);
+        const categoryProducts = products.filter(product => product.category === category);
+        
+        categoryProducts.forEach(product => {
+          const productCard = document.createElement('div');
+          productCard.className = 'product-card';
+          
+          productCard.innerHTML = `
+            <img src="${product.image}" alt="${product.name}" class="product-image">
+            <div class="product-info">
+              <h3 class="product-name">${product.name}</h3>
+              <p class="product-description">${product.description}</p>
+              <div class="product-price">R$ ${product.price.toFixed(2)}</div>
+              <button class="btn add-to-cart" data-product-id="${product.id}">Adicionar ao Carrinho</button>
+            </div>
+          `;
+          
+          sectionGrid.appendChild(productCard);
+        });
+        
+        // Adicionar event listeners para os botões "Adicionar ao Carrinho" nas seções
+        sectionGrid.querySelectorAll('.add-to-cart').forEach(button => {
+          button.addEventListener('click', function() {
+            const productId = parseInt(this.getAttribute('data-product-id'));
+            const product = products.find(p => p.id === productId);
+            if (product) {
+              addToCart(product);
+            }
+          });
+        });
+      }
     </script>
 
     <style>
@@ -292,6 +643,28 @@
         align-items: center;
         gap: 20px;
         position: relative;
+      }
+
+      /* Estilos para as seções de categoria */
+      .category-section {
+        margin: 60px 0;
+        padding: 40px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .category-section h2 {
+        margin-bottom: 30px;
+        font-size: 2rem;
+        text-align: center;
+      }
+
+      /* Estilo para mensagem de nenhum resultado */
+      .no-results {
+        text-align: center;
+        padding: 40px;
+        font-size: 1.2rem;
+        color: #999;
+        grid-column: 1 / -1;
       }
 
       /* Responsividade */
