@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Carrinho - JRStore</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/carrinho.css">
+  </head>
+  <body>
+    <header>
+      <div class="container header-content">
+        <a href="index.html" class="logo">JR<span>Store</span></a>
+        
+        <!-- Menu Mobile Toggle -->
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!-- Navegação -->
+        <nav class="main-nav" id="main-nav">
+          <ul>
+            <li><a href="index.html">Início</a></li>
+            <li><a href="masculino.html">Masculino</a></li>
+            <li><a href="feminino.html">Feminino</a></li>
+            <li><a href="infantil.html">Infantil</a></li>
+            <li><a href="ofertas.html">Ofertas</a></li>
+          </ul>
+        </nav>
+
+        <div class="search-cart">
+          <div class="search-box">
+            <input type="text" placeholder="Buscar produtos..." />
+            <button>🔍</button>
+          </div>
+          <a href="carrinho.html" class="cart-icon">
+            🛒 <span class="cart-count">0</span>
+          </a>
+
+          <!-- Botão de Login (aparece quando usuário não está logado) -->
+          <a href="login.html" id="header-login-btn" class="login-button">Entrar</a>
+
+          <!-- Menu do Usuário (aparece quando usuário está logado) -->
+          <div id="user-menu" class="user-menu" style="display: none">
+            <div class="user-info">
+              <span class="user-greeting">Olá, <span id="user-name">Usuário</span>!</span>
+              <div class="user-dropdown">
+                <a href="perfil.html" class="user-menu-item">👤 Meu Perfil</a>
+                <a href="pedidos.html" class="user-menu-item">📦 Meus Pedidos</a>
+                <button id="logout-btn" class="user-menu-item">🚪 Sair</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="page-header">
+        <h1>Meu Carrinho</h1>
+        <a href="index.html" class="btn-back">← Continuar Comprando</a>
+      </div>
+
+      <div class="cart-page">
+        <div class="cart-items-section">
+          <!-- Cabeçalho de seleção -->
+          <div class="cart-header" id="cart-header" style="display: none">
+            <div class="select-all">
+              <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this.checked)" />
+              <label for="select-all-checkbox">Selecionar todos</label>
+            </div>
+            <div class="selected-info" id="selected-info">
+              <span id="selected-count">0 itens selecionados</span>
+              <span id="selected-total">Total: R$ 0,00</span>
+            </div>
+          </div>
+
+          <div id="cart-items-container">
+            <!-- Itens do carrinho serão carregados aqui -->
+          </div>
+        </div>
+
+        <div class="cart-summary">
+          <h3>Resumo do Pedido</h3>
+          <div class="summary-line">
+            <span>Subtotal:</span>
+            <span id="subtotal">R$ 0,00</span>
+          </div>
+          <div class="summary-line">
+            <span>Frete:</span>
+            <span id="frete">R$ 0,00</span>
+          </div>
+          <div class="summary-line">
+            <span>Desconto:</span>
+            <span id="desconto">- R$ 0,00</span>
+          </div>
+          <div class="summary-line total">
+            <span>Total:</span>
+            <span id="total">R$ 0,00</span>
+          </div>
+
+          <!-- Resumo dos itens selecionados -->
+          <div class="selected-summary" id="selected-summary" style="display: none">
+            <div class="summary-line">
+              <span>Itens selecionados:</span>
+              <span id="selected-items-count">0</span>
+            </div>
+            <div class="summary-line">
+              <span>Total selecionado:</span>
+              <span id="selected-items-total">R$ 0,00</span>
+            </div>
+          </div>
+
+          <!-- Mensagem para usuário não logado -->
+          <div id="login-required" class="login-required" style="display: none">
+            <p>⚠️ Faça login para finalizar sua compra</p>
+            <a href="login.html" class="btn btn-login">Fazer Login</a>
+          </div>
+
+          <!-- Botão de checkout para usuário logado -->
+          <button class="btn btn-checkout" id="checkout-btn" style="display: none" onclick="finalizarCompra()">
+            🛒 Finalizar Compra dos Itens Selecionados
+          </button>
+
+          <!-- Botão para limpar carrinho -->
+          <button class="btn btn-clear" onclick="limparCarrinho()" style="margin-top: 10px">
+            🗑️ Limpar Carrinho
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>JRStore</h3>
+            <p>Moda com estilo e qualidade para todos os gostos.</p>
+          </div>
+          <div class="footer-column">
+            <h3>Links Rápidos</h3>
+            <ul>
+              <li><a href="index.html">Início</a></li>
+              <li><a href="sobre.html">Sobre Nós</a></li>
+              <li><a href="contato.html">Contato</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Categorias</h3>
+            <ul>
+              <li><a href="masculino.html">Masculino</a></li>
+              <li><a href="feminino.html">Feminino</a></li>
+              <li><a href="infantil.html">Infantil</a></li>
+            </ul>
+          </div>
+          <div class="footer-column newsletter">
+            <h3>Newsletter</h3>
+            <input type="email" placeholder="Seu e-mail" />
+            <button class="btn">Inscrever</button>
+          </div>
+        </div>
+        <div class="copyright">
+          &copy; 2023 JRStore. Todos os direitos reservados.
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts na mesma ordem da página de perfil -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/carrinho.js"></script>
+
+    <style>
+      /* Estilos do menu mobile */
+      .mobile-menu-toggle {
+        display: none;
+        flex-direction: column;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        width: 30px;
+        height: 30px;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .mobile-menu-toggle span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: var(--text);
+        border-radius: 2px;
+        transition: var(--transition);
+        transform-origin: center;
+      }
+
+      .mobile-menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .mobile-menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .mobile-menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+
+      @media (max-width: 768px) {
+        .mobile-menu-toggle {
+          display: flex;
+        }
+
+        .main-nav {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--card-bg);
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+          transform: translateY(-10px);
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s ease;
+          z-index: 999;
+        }
+
+        .main-nav.active {
+          transform: translateY(0);
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .main-nav ul {
+          flex-direction: column;
+          gap: 0;
+          padding: 15px 0;
+        }
+
+        .main-nav ul li {
+          width: 100%;
+        }
+
+        .main-nav ul li a {
+          display: block;
+          padding: 12px 20px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          font-size: 1rem;
+        }
+
+        .main-nav ul li:last-child a {
+          border-bottom: none;
+        }
+      }
+
+      /* Notifications */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        border-radius: 5px;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+      }
+
+      .notification.success {
+        background: #4caf50;
+      }
+
+      .notification.error {
+        background: #f44336;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </body>
+</html>

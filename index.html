@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <title>JRStore - Moda e Estilo</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container header-content">
+        <a href="index.html" class="logo">JR<span>Store</span></a>
+        
+        <!-- Menu Mobile Toggle -->
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!-- Navegação -->
+        <nav class="main-nav" id="main-nav">
+          <ul>
+            <li><a href="index.html">Início</a></li>
+            <li><a href="masculino.html">Masculino</a></li>
+            <li><a href="feminino.html">Feminino</a></li>
+            <li><a href="infantil.html">Infantil</a></li>
+            <li><a href="ofertas.html">Ofertas</a></li>
+          </ul>
+        </nav>
+
+        <div class="search-cart">
+          <div class="search-box">
+            <input type="text" placeholder="Buscar produtos..." />
+            <button>🔍</button>
+          </div>
+          <a href="carrinho.html" class="cart-icon">
+            🛒 <span class="cart-count">0</span>
+          </a>
+
+          <!-- Botão de Login (aparece quando usuário não está logado) -->
+          <a href="login.html" id="header-login-btn" class="login-button"
+            >Entrar</a
+          >
+
+          <!-- Menu do Usuário (aparece quando usuário está logado) -->
+          <div id="user-menu" class="user-menu" style="display: none">
+            <div class="user-info">
+              <span class="user-greeting"
+                >Olá, <span id="user-name">Usuário</span>!</span
+              >
+              <div class="user-dropdown">
+                <a href="perfil.html" class="user-menu-item">👤 Meu Perfil</a>
+                <a href="pedidos.html" class="user-menu-item"
+                  >📦 Meus Pedidos</a
+                >
+                <button id="logout-btn" class="user-menu-item">🚪 Sair</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Banner Principal -->
+    <section class="hero">
+      <div class="container">
+        <h1>Moda com Estilo e Qualidade</h1>
+        <p>
+          Descubra as últimas tendências em moda com preços incríveis. Entrega
+          rápida para todo o Brasil.
+        </p>
+        <a href="#produtos" class="btn">Ver Ofertas</a>
+      </div>
+    </section>
+
+    <!-- Conteúdo Principal -->
+    <main class="container">
+      <!-- Filtros e Categorias -->
+      <section class="filters">
+        <div class="categories">
+          <button class="category-btn active" data-category="all">Todos</button>
+          <button class="category-btn" data-category="masculino">
+            Masculino
+          </button>
+          <button class="category-btn" data-category="feminino">
+            Feminino
+          </button>
+          <button class="category-btn" data-category="infantil">
+            Infantil
+          </button>
+        </div>
+        <div class="sort-options">
+          <select id="sort-by">
+            <option value="name">Ordenar por: Nome</option>
+            <option value="price-low">Ordenar por: Preço (menor)</option>
+            <option value="price-high">Ordenar por: Preço (maior)</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- Grid de Produtos -->
+      <section class="products-section" id="produtos">
+        <div class="loading" id="loading">Carregando produtos...</div>
+        <div class="products-grid" id="products-grid"></div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-column">
+            <h3>JRStore</h3>
+            <p>Moda com estilo e qualidade para todos os gostos.</p>
+          </div>
+          <div class="footer-column">
+            <h3>Links Rápidos</h3>
+            <ul>
+              <li><a href="index.html">Início</a></li>
+              <li><a href="sobre.html">Sobre Nós</a></li>
+              <li><a href="contato.html">Contato</a></li>
+            </ul>
+          </div>
+          <div class="footer-column">
+            <h3>Categorias</h3>
+            <ul>
+              <li><a href="masculino.html">Masculino</a></li>
+              <li><a href="feminino.html">Feminino</a></li>
+              <li><a href="infantil.html">Infantil</a></li>
+            </ul>
+          </div>
+          <div class="footer-column newsletter">
+            <h3>Newsletter</h3>
+            <input type="email" placeholder="Seu e-mail" />
+            <button class="btn">Inscrever</button>
+          </div>
+        </div>
+        <div class="copyright">
+          &copy; 2023 JRStore. Todos os direitos reservados.
+        </div>
+      </div>
+    </footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+      // Carrinho functions
+      function getCart() {
+        return JSON.parse(localStorage.getItem("cart")) || [];
+      }
+
+      function updateCartCount() {
+        const cart = getCart();
+        const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+        document.querySelector(".cart-count").textContent = total;
+      }
+
+      function addToCart(product) {
+        const cart = getCart();
+        const existingItem = cart.find((item) => item.id === product.id);
+
+        if (existingItem) {
+          existingItem.quantity += 1;
+        } else {
+          cart.push({ ...product, quantity: 1 });
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+        updateCartCount();
+        alert("Produto adicionado ao carrinho!");
+      }
+
+      // Menu Mobile
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mainNav = document.getElementById('main-nav');
+        
+        if (mobileMenuToggle && mainNav) {
+          mobileMenuToggle.addEventListener('click', function() {
+            mainNav.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+          });
+
+          // Fechar menu ao clicar em um link
+          const navLinks = mainNav.querySelectorAll('a');
+          navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+              mainNav.classList.remove('active');
+              mobileMenuToggle.classList.remove('active');
+            });
+          });
+
+          // Fechar menu ao clicar fora
+          document.addEventListener('click', function(e) {
+            if (!mainNav.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+              mainNav.classList.remove('active');
+              mobileMenuToggle.classList.remove('active');
+            }
+          });
+        }
+      });
+    </script>
+
+    <style>
+      /* Menu Mobile */
+      .mobile-menu-toggle {
+        display: none;
+        flex-direction: column;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        width: 30px;
+        height: 30px;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .mobile-menu-toggle span {
+        display: block;
+        width: 100%;
+        height: 3px;
+        background: var(--text);
+        border-radius: 2px;
+        transition: var(--transition);
+        transform-origin: center;
+      }
+
+      .mobile-menu-toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(6px, 6px);
+      }
+
+      .mobile-menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .mobile-menu-toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(6px, -6px);
+      }
+
+      /* Navegação Principal */
+      .main-nav ul {
+        display: flex;
+        list-style: none;
+        gap: 25px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-nav ul li a {
+        color: var(--text);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        padding: 8px 0;
+        position: relative;
+        font-size: 0.9rem;
+        white-space: nowrap;
+      }
+
+      .main-nav ul li a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: var(--secondary);
+        transition: var(--transition);
+      }
+
+      .main-nav ul li a:hover {
+        color: var(--secondary);
+      }
+
+      .main-nav ul li a:hover::after {
+        width: 100%;
+      }
+
+      /* Header Content */
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        position: relative;
+      }
+
+      /* Responsividade */
+      @media (max-width: 1024px) {
+        .main-nav ul {
+          gap: 20px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .mobile-menu-toggle {
+          display: flex;
+        }
+
+        .main-nav {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--card-bg);
+          border-top: 1px solid rgba(255, 255, 255, 0.1);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+          transform: translateY(-10px);
+          opacity: 0;
+          visibility: hidden;
+          transition: all 0.3s ease;
+          z-index: 999;
+        }
+
+        .main-nav.active {
+          transform: translateY(0);
+          opacity: 1;
+          visibility: visible;
+        }
+
+        .main-nav ul {
+          flex-direction: column;
+          gap: 0;
+          padding: 15px 0;
+        }
+
+        .main-nav ul li {
+          width: 100%;
+        }
+
+        .main-nav ul li a {
+          display: block;
+          padding: 12px 20px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+          font-size: 1rem;
+        }
+
+        .main-nav ul li a::after {
+          display: none;
+        }
+
+        .main-nav ul li:last-child a {
+          border-bottom: none;
+        }
+
+        .main-nav ul li a:hover {
+          background: rgba(255, 255, 255, 0.05);
+          color: var(--secondary);
+        }
+
+        .header-content {
+          flex-wrap: wrap;
+        }
+
+        .search-cart {
+          order: 3;
+          width: 100%;
+          justify-content: center;
+          margin-top: 15px;
+          display: none;
+        }
+
+        .main-nav.active + .search-cart {
+          display: flex;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .logo {
+          font-size: 1.4rem;
+        }
+
+        .search-cart {
+          gap: 10px;
+        }
+
+        .search-box input {
+          width: 150px;
+        }
+
+        .user-greeting {
+          font-size: 0.8rem;
+        }
+      }
+
+      /* Ajustes para quando o menu está aberto no mobile */
+      @media (max-width: 768px) {
+        body.menu-open {
+          overflow: hidden;
+        }
+
+        .main-nav.active {
+          max-height: 70vh;
+          overflow-y: auto;
+        }
+      }
+    </style>
+  </body>
+</html>

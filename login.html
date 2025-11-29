@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Entrar - JRStore</title>
+    <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="index.html" class="logo">JR<span>Store</span></a>
+            <div class="search-cart">
+                <a href="carrinho.html" class="cart-icon">
+                    🛒 <span class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="auth-page">
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Login</button>
+                    <button class="auth-tab" data-tab="register">Cadastro</button>
+                </div>
+
+                <!-- Formulário de Login -->
+                <form id="login-form" class="auth-form active">
+                    <h2>Bem-vindo de volta</h2>
+                    
+                    <div class="form-group">
+                        <input type="email" id="login-email" placeholder="E-mail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" id="login-password" placeholder="Senha" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                    
+                    <div class="auth-links">
+                        <p><a href="#" class="forgot-password">Esqueci minha senha</a></p>
+                    </div>
+
+                    <div id="login-message" class="message"></div>
+                </form>
+
+                <!-- Formulário de Cadastro -->
+                <form id="register-form" class="auth-form">
+                    <h2>Criar conta</h2>
+                    
+                    <div class="form-group">
+                        <input type="text" id="register-name" placeholder="Nome completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="email" id="register-email" placeholder="E-mail" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="tel" id="register-phone" placeholder="Telefone (11) 99999-9999" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" id="register-password" placeholder="Senha (mínimo 6 caracteres)" required minlength="6">
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="password" id="register-confirm-password" placeholder="Confirmar senha" required>
+                    </div>
+
+                    <!-- Endereço -->
+                    <div class="address-section">
+                        <h3>Endereço de Entrega</h3>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="register-cep" placeholder="CEP" required maxlength="9">
+                                <div class="cep-loading" style="display: none;">Buscando CEP...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="register-street" placeholder="Rua" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="register-number" placeholder="Número" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="register-complement" placeholder="Complemento (opcional)">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="register-neighborhood" placeholder="Bairro" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="register-city" placeholder="Cidade" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="register-state" placeholder="Estado" required maxlength="2">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Cadastrar</button>
+
+                    <div id="register-message" class="message"></div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sistema de tabs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    
+                    // Ativa tab
+                    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Mostra form
+                    document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+                    document.getElementById(`${tabName}-form`).classList.add('active');
+                });
+            });
+
+            // Máscara de telefone
+            const phoneInput = document.getElementById('register-phone');
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 11) value = value.substring(0, 11);
+                    
+                    if (value.length > 0) {
+                        if (value.length <= 2) {
+                            value = `(${value}`;
+                        } else if (value.length <= 7) {
+                            value = `(${value.substring(0,2)}) ${value.substring(2)}`;
+                        } else {
+                            value = `(${value.substring(0,2)}) ${value.substring(2,7)}-${value.substring(7)}`;
+                        }
+                    }
+                    
+                    e.target.value = value;
+                });
+            }
+
+            // Máscara de CEP
+            const cepInput = document.getElementById('register-cep');
+            if (cepInput) {
+                cepInput.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value.length > 8) value = value.substring(0, 8);
+                    
+                    if (value.length > 5) {
+                        value = `${value.substring(0,5)}-${value.substring(5)}`;
+                    }
+                    
+                    e.target.value = value;
+                });
+
+                // Buscar CEP quando perder o foco
+                cepInput.addEventListener('blur', function() {
+                    const cep = this.value.replace(/\D/g, '');
+                    if (cep.length === 8) {
+                        searchCEP(cep);
+                    }
+                });
+            }
+
+            // Formulário de Login
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('login-email').value;
+                    const password = document.getElementById('login-password').value;
+                    const messageElement = document.getElementById('login-message');
+                    
+                    // Validação básica
+                    if (!email || !password) {
+                        showMessage(messageElement, 'Por favor, preencha todos os campos.', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        const response = await fetch(`${window.API_URL}/auth/login`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                email: email,
+                                password: password
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            // Login bem-sucedido
+                            localStorage.setItem('userToken', data.token);
+                            localStorage.setItem('userData', JSON.stringify(data.user));
+                            
+                            showMessage(messageElement, 'Login realizado com sucesso!', 'success');
+                            
+                            // Redirecionar após breve delay
+                            setTimeout(() => {
+                                window.location.href = 'index.html';
+                            }, 1500);
+                        } else {
+                            showMessage(messageElement, data.message || 'Erro ao fazer login.', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Erro no login:', error);
+                        showMessage(messageElement, 'Erro de conexão. Tente novamente.', 'error');
+                    }
+                });
+            }
+
+            // Formulário de Cadastro
+            const registerForm = document.getElementById('register-form');
+            if (registerForm) {
+                registerForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('register-name').value;
+                    const email = document.getElementById('register-email').value;
+                    const phone = document.getElementById('register-phone').value;
+                    const password = document.getElementById('register-password').value;
+                    const confirmPassword = document.getElementById('register-confirm-password').value;
+                    const cep = document.getElementById('register-cep').value;
+                    const street = document.getElementById('register-street').value;
+                    const number = document.getElementById('register-number').value;
+                    const complement = document.getElementById('register-complement').value;
+                    const neighborhood = document.getElementById('register-neighborhood').value;
+                    const city = document.getElementById('register-city').value;
+                    const state = document.getElementById('register-state').value;
+                    
+                    const messageElement = document.getElementById('register-message');
+                    
+                    // Validações
+                    if (!name || !email || !phone || !password || !confirmPassword || !cep || !street || !number || !neighborhood || !city || !state) {
+                        showMessage(messageElement, 'Por favor, preencha todos os campos obrigatórios.', 'error');
+                        return;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        showMessage(messageElement, 'As senhas não coincidem.', 'error');
+                        return;
+                    }
+                    
+                    if (password.length < 6) {
+                        showMessage(messageElement, 'A senha deve ter pelo menos 6 caracteres.', 'error');
+                        return;
+                    }
+                    
+                    if (phone.replace(/\D/g, '').length < 10) {
+                        showMessage(messageElement, 'Digite um telefone válido.', 'error');
+                        return;
+                    }
+                    
+                    try {
+                        const response = await fetch(`${window.API_URL}/auth/register`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                name: name,
+                                email: email,
+                                phone: phone.replace(/\D/g, ''),
+                                password: password,
+                                address: {
+                                    cep: cep.replace(/\D/g, ''),
+                                    street: street,
+                                    number: number,
+                                    complement: complement,
+                                    neighborhood: neighborhood,
+                                    city: city,
+                                    state: state.toUpperCase()
+                                }
+                            })
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            showMessage(messageElement, 'Cadastro realizado com sucesso! Faça login para continuar.', 'success');
+                            
+                            // Limpar formulário
+                            registerForm.reset();
+                            
+                            // Mudar para aba de login após breve delay
+                            setTimeout(() => {
+                                document.querySelector('[data-tab="login"]').click();
+                                document.getElementById('login-email').value = email;
+                            }, 2000);
+                        } else {
+                            showMessage(messageElement, data.message || 'Erro ao realizar cadastro.', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Erro no cadastro:', error);
+                        showMessage(messageElement, 'Erro de conexão. Tente novamente.', 'error');
+                    }
+                });
+            }
+
+            // Atualizar contador do carrinho
+            function updateCartCount() {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const total = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+                document.querySelector('.cart-count').textContent = total;
+            }
+            updateCartCount();
+        });
+
+        // Função para buscar CEP
+        async function searchCEP(cep) {
+            const cepField = document.getElementById('register-cep');
+            const loadingElement = cepField.parentNode.querySelector('.cep-loading');
+            
+            cepField.disabled = true;
+            loadingElement.style.display = 'block';
+            
+            try {
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+                
+                if (!data.erro) {
+                    document.getElementById('register-street').value = data.logradouro || '';
+                    document.getElementById('register-neighborhood').value = data.bairro || '';
+                    document.getElementById('register-city').value = data.localidade || '';
+                    document.getElementById('register-state').value = data.uf || '';
+                    
+                    // Focar no número
+                    document.getElementById('register-number').focus();
+                    
+                    loadingElement.textContent = 'CEP encontrado!';
+                    loadingElement.style.color = 'var(--success)';
+                } else {
+                    loadingElement.textContent = 'CEP não encontrado';
+                    loadingElement.style.color = 'var(--secondary)';
+                }
+            } catch (error) {
+                console.error('Erro ao buscar CEP:', error);
+                loadingElement.textContent = 'Erro ao buscar CEP';
+                loadingElement.style.color = 'var(--secondary)';
+            } finally {
+                setTimeout(() => {
+                    loadingElement.style.display = 'none';
+                    cepField.disabled = false;
+                }, 2000);
+            }
+        }
+
+        // Função para mostrar mensagens
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = `message ${type}`;
+            element.style.display = 'block';
+            
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+
+    <style>
+        .auth-page {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+            padding: 40px 0;
+        }
+
+        .auth-container {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .auth-tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .auth-form h2 {
+            margin-bottom: 20px;
+            text-align: center;
+            color: var(--text);
+            font-size: 1.4rem;
+        }
+
+        .auth-form h3 {
+            margin: 20px 0 15px 0;
+            color: var(--text);
+            font-size: 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .auth-form input:focus {
+            border-color: var(--accent);
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .auth-form input::placeholder {
+            color: var(--gray);
+        }
+
+        .auth-form .btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .auth-links a {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+
+        .address-section {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cep-loading {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: var(--accent);
+        }
+
+        .message {
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(56, 161, 105, 0.2);
+            color: #68d391;
+            border: 1px solid rgba(56, 161, 105, 0.3);
+        }
+
+        .message.error {
+            background: rgba(229, 62, 62, 0.2);
+            color: #fc8181;
+            border: 1px solid rgba(229, 62, 62, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 20px;
+                margin: 0 10px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .auth-tab {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+
+            .auth-form h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</body>
+</html>

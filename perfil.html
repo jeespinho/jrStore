@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meu Perfil - JRStore</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      /* ===== VARIÁVEIS E ESTILOS DO PERFIL ===== */
+      :root {
+        --primary: #6366f1;
+        --primary-dark: #4f46e5;
+        --secondary: #f8fafc;
+        --accent: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --text: #1e293b;
+        --text-light: #64748b;
+        --border: #e2e8f0;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --radius: 12px;
+        --radius-sm: 8px;
+        --transition: all 0.3s ease;
+      }
+
+      .profile-container {
+        display: grid;
+        gap: 24px;
+        margin-top: 30px;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .profile-card {
+        background: white;
+        padding: 24px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+      }
+
+      .profile-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .profile-card h2 {
+        color: var(--text);
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      .btn-edit,
+      .btn-add {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-edit:hover,
+      .btn-add:hover {
+        background: var(--primary-dark);
+        transform: translateY(-1px);
+      }
+
+      .profile-field {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .profile-field label {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .profile-field span {
+        color: var(--text-light);
+      }
+
+      .profile-edit-form .form-group {
+        margin-bottom: 16px;
+      }
+
+      .profile-edit-form label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--text);
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .profile-edit-form input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        background: white;
+        color: var(--text);
+        font-size: 0.9rem;
+        transition: var(--transition);
+      }
+
+      .profile-edit-form input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .btn-secondary {
+        background: white;
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: var(--secondary);
+        border-color: var(--primary);
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #dc2626;
+      }
+
+      /* Endereços */
+      .address-card {
+        background: var(--secondary);
+        padding: 20px;
+        border-radius: var(--radius-sm);
+        margin-bottom: 16px;
+        border: 1px solid var(--border);
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .address-card.default {
+        border-color: var(--primary);
+        background: #f0f9ff;
+      }
+
+      .default-badge {
+        background: var(--primary);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+      }
+
+      .address-content {
+        flex: 1;
+      }
+
+      .address-content p {
+        margin: 4px 0;
+        color: var(--text);
+      }
+
+      .address-content p:first-child {
+        font-weight: 600;
+        color: var(--text);
+      }
+
+      .address-actions {
+        display: flex;
+        gap: 8px;
+        margin-left: 16px;
+      }
+
+      .btn-action {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 4px;
+        transition: var(--transition);
+        font-size: 1rem;
+        color: var(--text-light);
+      }
+
+      .btn-action:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: var(--text);
+      }
+
+      .btn-action.edit:hover {
+        color: var(--primary);
+      }
+      .btn-action.set-default:hover {
+        color: var(--accent);
+      }
+      .btn-action.delete:hover {
+        color: var(--danger);
+      }
+
+      .no-address {
+        text-align: center;
+        color: var(--text-light);
+        padding: 40px 20px;
+      }
+
+      /* Danger Zone */
+      .danger-zone {
+        border-color: var(--danger);
+      }
+
+      .danger-zone h2 {
+        color: var(--danger);
+      }
+
+      .danger-actions {
+        display: grid;
+        gap: 20px;
+      }
+
+      .danger-action {
+        padding: 20px;
+        background: #fef2f2;
+        border-radius: var(--radius-sm);
+        border: 1px solid #fecaca;
+      }
+
+      .danger-action h3 {
+        margin: 0 0 8px 0;
+        color: var(--text);
+        font-size: 1rem;
+      }
+
+      .danger-action p {
+        margin: 0 0 16px 0;
+        color: var(--text-light);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      /* Modais */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .modal-header h2 {
+        margin: 0;
+        color: var(--text);
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .close-modal {
+        background: none;
+        border: none;
+        color: var(--text-light);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .close-modal:hover {
+        color: var(--text);
+      }
+
+      .modal-body {
+        padding: 24px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .checkbox-group input[type="checkbox"] {
+        width: auto;
+        transform: scale(1.2);
+      }
+
+      .checkbox-group label {
+        margin: 0;
+        font-weight: 400;
+      }
+
+      .warning-message {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: var(--radius-sm);
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .warning-message h3 {
+        color: var(--danger);
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+      }
+
+      .warning-message ul {
+        margin: 12px 0;
+        padding-left: 20px;
+        color: var(--text-light);
+      }
+
+      .warning-message li {
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+      }
+
+      .warning-message p {
+        margin: 12px 0 0 0;
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      /* Header da página */
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .page-header h1 {
+        color: var(--text);
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+      }
+
+      .btn-back:hover {
+        color: var(--primary-dark);
+      }
+
+      /* Responsividade */
+      @media (max-width: 768px) {
+        .profile-field {
+          grid-template-columns: 1fr;
+          gap: 8px;
+        }
+
+        .profile-card-header {
+          flex-direction: column;
+          gap: 12px;
+          align-items: flex-start;
+        }
+
+        .form-row {
+          grid-template-columns: 1fr;
+          gap: 0;
+        }
+
+        .address-card {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .address-actions {
+          margin-left: 0;
+          justify-content: flex-start;
+        }
+
+        .form-actions {
+          flex-direction: column;
+        }
+
+        .page-header {
+          flex-direction: column;
+          gap: 12px;
+          align-items: flex-start;
+        }
+
+        .modal-content {
+          margin: 20px;
+          max-height: calc(100vh - 40px);
+        }
+      }
+
+      /* Notificações */
+      .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: var(--accent);
+        color: white;
+        padding: 12px 20px;
+        border-radius: var(--radius-sm);
+        z-index: 10000;
+        box-shadow: var(--shadow);
+        animation: slideIn 0.3s ease-out;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .notification.error {
+        background: var(--danger);
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container header-content">
+        <a href="index.html" class="logo">JR<span>Store</span></a>
+        <div class="search-cart">
+          <a href="carrinho.html" class="cart-icon">
+            🛒 <span class="cart-count">0</span>
+          </a>
+          <div id="user-menu" class="user-menu">
+            <div class="user-info">
+              <span class="user-greeting"
+                >Olá, <span id="user-name">Usuário</span>!</span
+              >
+              <div class="user-dropdown">
+                <a href="perfil.html" class="user-menu-item">👤 Meu Perfil</a>
+                <a href="pedidos.html" class="user-menu-item"
+                  >📦 Meus Pedidos</a
+                >
+                <button id="logout-btn" class="user-menu-item">🚪 Sair</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <div class="page-header">
+        <h1>Meu Perfil</h1>
+        <a href="index.html" class="btn-back">← Voltar para Loja</a>
+      </div>
+
+      <div class="profile-container">
+        <!-- Informações Pessoais -->
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <h2>Informações Pessoais</h2>
+            <button class="btn-edit" onclick="toggleEditProfile()">
+              ✏️ Editar
+            </button>
+          </div>
+
+          <div id="profile-view">
+            <!-- Modo visualização -->
+            <div class="profile-field">
+              <label>Nome completo:</label>
+              <span id="view-name">Carregando...</span>
+            </div>
+            <div class="profile-field">
+              <label>E-mail:</label>
+              <span id="view-email">Carregando...</span>
+            </div>
+            <div class="profile-field">
+              <label>Telefone:</label>
+              <span id="view-phone">Carregando...</span>
+            </div>
+            <div class="profile-field">
+              <label>Membro desde:</label>
+              <span id="view-createdAt">Carregando...</span>
+            </div>
+          </div>
+
+          <form
+            id="profile-edit-form"
+            class="profile-edit-form"
+            style="display: none"
+          >
+            <!-- Modo edição -->
+            <div class="form-group">
+              <label for="edit-name">Nome completo:</label>
+              <input type="text" id="edit-name" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-phone">Telefone:</label>
+              <input type="tel" id="edit-phone" placeholder="(11) 99999-9999" />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="toggleEditProfile()"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-primary">
+                Salvar Alterações
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Endereços -->
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <h2>Endereços</h2>
+            <button class="btn-add" onclick="openAddAddressModal()">
+              ➕ Adicionar Endereço
+            </button>
+          </div>
+
+          <div id="addresses-list">
+            <!-- Endereços serão carregados via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Configurações da Conta -->
+        <div class="profile-card danger-zone">
+          <h2>Configurações da Conta</h2>
+
+          <div class="danger-actions">
+            <div class="danger-action">
+              <h3>🔄 Alterar Senha</h3>
+              <p>Atualize sua senha de acesso</p>
+              <button
+                class="btn btn-secondary"
+                onclick="openChangePasswordModal()"
+              >
+                Alterar Senha
+              </button>
+            </div>
+
+            <div class="danger-action">
+              <h3>🗑️ Excluir Conta</h3>
+              <p>
+                Esta ação não pode ser desfeita. Todos os seus dados serão
+                permanentemente removidos.
+              </p>
+              <button class="btn btn-danger" onclick="openDeleteAccountModal()">
+                Excluir Minha Conta
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Modal para Adicionar/Editar Endereço -->
+    <div id="address-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="address-modal-title">Adicionar Endereço</h2>
+          <button class="close-modal" onclick="closeAddressModal()">
+            &times;
+          </button>
+        </div>
+        <form id="address-form" class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="address-cep">CEP:</label>
+              <input type="text" id="address-cep" required maxlength="9" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="address-street">Rua:</label>
+              <input type="text" id="address-street" required />
+            </div>
+            <div class="form-group">
+              <label for="address-number">Número:</label>
+              <input type="text" id="address-number" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="address-complement">Complemento:</label>
+              <input type="text" id="address-complement" />
+            </div>
+            <div class="form-group">
+              <label for="address-neighborhood">Bairro:</label>
+              <input type="text" id="address-neighborhood" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="address-city">Cidade:</label>
+              <input type="text" id="address-city" required />
+            </div>
+            <div class="form-group">
+              <label for="address-state">Estado:</label>
+              <input type="text" id="address-state" required maxlength="2" />
+            </div>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <input type="checkbox" id="address-isDefault" />
+            <label for="address-isDefault"
+              >Tornar este endereço principal</label
+            >
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeAddressModal()"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Salvar Endereço
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para Alterar Senha -->
+    <div id="password-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Alterar Senha</h2>
+          <button class="close-modal" onclick="closePasswordModal()">
+            &times;
+          </button>
+        </div>
+        <form id="password-form" class="modal-body">
+          <div class="form-group">
+            <label for="current-password">Senha Atual:</label>
+            <input type="password" id="current-password" required />
+          </div>
+          <div class="form-group">
+            <label for="new-password">Nova Senha:</label>
+            <input type="password" id="new-password" required minlength="6" />
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">Confirmar Nova Senha:</label>
+            <input type="password" id="confirm-password" required />
+          </div>
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closePasswordModal()"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">Alterar Senha</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal para Excluir Conta -->
+    <div id="delete-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Excluir Conta</h2>
+          <button class="close-modal" onclick="closeDeleteModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="warning-message">
+            <h3>⚠️ Atenção!</h3>
+            <p>
+              Esta ação é <strong>irreversível</strong>. Todos os seus dados
+              serão permanentemente excluídos, incluindo:
+            </p>
+            <ul>
+              <li>Seu perfil e informações pessoais</li>
+              <li>Seus endereços cadastrados</li>
+              <li>Seu histórico de pedidos</li>
+              <li>Seus dados de pagamento</li>
+            </ul>
+            <p>Tem certeza que deseja continuar?</p>
+          </div>
+
+          <form id="delete-form" class="delete-form">
+            <div class="form-group">
+              <label for="confirm-email"
+                >Digite seu e-mail para confirmar:</label
+              >
+              <input type="email" id="confirm-email" required />
+            </div>
+            <div class="form-group">
+              <label for="confirm-password-delete">Digite sua senha:</label>
+              <input type="password" id="confirm-password-delete" required />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="closeDeleteModal()"
+              >
+                Cancelar
+              </button>
+              <button type="submit" class="btn btn-danger">
+                Excluir Minha Conta Permanentemente
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+
+    <script>
+      // Configuração da API
+      window.API_URL = 'http://localhost:3000';
+      
+      let currentUser = null;
+      let editingAddressId = null;
+
+      // Carregar dados do perfil
+      async function loadProfile() {
+        if (!window.authManager || !window.authManager.isLoggedIn()) {
+          window.location.href = "login.html";
+          return;
+        }
+
+        try {
+          const response = await fetch(`${window.API_URL}/api/auth/profile`, {
+            headers: {
+              'Authorization': `Bearer ${window.authManager.getToken()}`,
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error("Erro ao carregar perfil");
+          }
+
+          const result = await response.json();
+          
+          if (result.success) {
+            currentUser = result.user;
+            displayProfile(currentUser);
+          } else {
+            throw new Error(result.message || "Erro ao carregar perfil");
+          }
+        } catch (error) {
+          console.error("Erro ao carregar perfil:", error);
+          showNotification("❌ Erro ao carregar dados do perfil.", "error");
+        }
+      }
+
+      function displayProfile(user) {
+        // Atualizar nome no header
+        document.getElementById("user-name").textContent =
+          user.name.split(" ")[0];
+
+        // Informações pessoais - modo visualização
+        document.getElementById("view-name").textContent = user.name;
+        document.getElementById("view-email").textContent = user.email;
+        document.getElementById("view-phone").textContent =
+          user.phone || "Não informado";
+        document.getElementById("view-createdAt").textContent = user.createdAt 
+          ? new Date(user.createdAt).toLocaleDateString("pt-BR")
+          : "Data não disponível";
+
+        // Informações pessoais - modo edição
+        document.getElementById("edit-name").value = user.name;
+        document.getElementById("edit-phone").value = user.phone || "";
+
+        // Endereços - usando os campos do schema atual
+        const addresses = [{
+          id: 'main-address',
+          street: user.street || '',
+          number: user.number || '',
+          complement: user.complement || '',
+          neighborhood: user.neighborhood || '',
+          city: user.city || '',
+          state: user.state || '',
+          zipCode: user.zipCode || '',
+          isDefault: true
+        }].filter(addr => addr.street && addr.number); // Só mostra se tiver dados
+
+        displayAddresses(addresses);
+      }
+
+      function displayAddresses(addresses) {
+        const addressesList = document.getElementById("addresses-list");
+
+        if (addresses.length === 0) {
+          addressesList.innerHTML = `
+            <div class="no-address">
+              <p>Nenhum endereço cadastrado.</p>
+              <button class="btn btn-primary" onclick="openAddAddressModal()">
+                Adicionar Primeiro Endereço
+              </button>
+            </div>
+          `;
+          return;
+        }
+
+        addressesList.innerHTML = addresses
+          .map(
+            (address) => `
+            <div class="address-card ${address.isDefault ? "default" : ""}">
+              ${
+                address.isDefault
+                  ? '<span class="default-badge">Principal</span>'
+                  : ""
+              }
+              <div class="address-content">
+                <p><strong>${address.street}, ${address.number}</strong></p>
+                <p>${address.complement || ""}</p>
+                <p>${address.neighborhood} - ${address.city}/${address.state}</p>
+                <p>CEP: ${address.zipCode}</p>
+              </div>
+              <div class="address-actions">
+                <button class="btn-action edit" onclick="editAddress('${address.id}')" title="Editar">
+                  ✏️
+                </button>
+              </div>
+            </div>
+          `
+          )
+          .join("");
+      }
+
+      // Toggle entre modo visualização e edição do perfil
+      function toggleEditProfile() {
+        const viewMode = document.getElementById("profile-view");
+        const editMode = document.getElementById("profile-edit-form");
+
+        if (viewMode.style.display === "none") {
+          viewMode.style.display = "block";
+          editMode.style.display = "none";
+        } else {
+          viewMode.style.display = "none";
+          editMode.style.display = "block";
+        }
+      }
+
+      // Salvar edição do perfil
+      document
+        .getElementById("profile-edit-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById("edit-name").value;
+          const phone = document.getElementById("edit-phone").value;
+
+          try {
+            const response = await fetch(`${window.API_URL}/api/auth/profile`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${window.authManager.getToken()}`,
+              },
+              body: JSON.stringify({ name, phone }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                showNotification("✅ Perfil atualizado com sucesso!", "success");
+                toggleEditProfile();
+                loadProfile(); // Recarregar dados
+              } else {
+                throw new Error(result.message);
+              }
+            } else {
+              const data = await response.json();
+              throw new Error(data.message || "Erro ao atualizar perfil");
+            }
+          } catch (error) {
+            console.error("Erro ao atualizar perfil:", error);
+            showNotification("❌ Erro ao atualizar perfil: " + error.message, "error");
+          }
+        });
+
+      // Modal de Endereço
+      function openAddAddressModal() {
+        editingAddressId = null;
+        document.getElementById("address-modal-title").textContent =
+          "Adicionar Endereço";
+        document.getElementById("address-form").reset();
+        document.getElementById("address-modal").style.display = "flex";
+      }
+
+      function editAddress(addressId) {
+        const address = currentUser.addresses?.find(
+          (addr) => addr.id === addressId
+        ) || {
+          street: currentUser.street || '',
+          number: currentUser.number || '',
+          complement: currentUser.complement || '',
+          neighborhood: currentUser.neighborhood || '',
+          city: currentUser.city || '',
+          state: currentUser.state || '',
+          zipCode: currentUser.zipCode || '',
+          isDefault: true
+        };
+
+        editingAddressId = addressId;
+        document.getElementById("address-modal-title").textContent =
+          "Editar Endereço";
+
+        // Preencher formulário
+        document.getElementById("address-cep").value = address.zipCode || '';
+        document.getElementById("address-street").value = address.street || '';
+        document.getElementById("address-number").value = address.number || '';
+        document.getElementById("address-complement").value = address.complement || '';
+        document.getElementById("address-neighborhood").value = address.neighborhood || '';
+        document.getElementById("address-city").value = address.city || '';
+        document.getElementById("address-state").value = address.state || '';
+        document.getElementById("address-isDefault").checked = address.isDefault || false;
+
+        document.getElementById("address-modal").style.display = "flex";
+      }
+
+      function closeAddressModal() {
+        document.getElementById("address-modal").style.display = "none";
+        editingAddressId = null;
+      }
+
+      // Salvar endereço
+      document
+        .getElementById("address-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const addressData = {
+            street: document.getElementById("address-street").value,
+            number: document.getElementById("address-number").value,
+            complement: document.getElementById("address-complement").value,
+            neighborhood: document.getElementById("address-neighborhood").value,
+            city: document.getElementById("address-city").value,
+            state: document.getElementById("address-state").value,
+            zipCode: document.getElementById("address-cep").value.replace(/\D/g, ''),
+          };
+
+          try {
+            const response = await fetch(`${window.API_URL}/api/auth/profile`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${window.authManager.getToken()}`,
+              },
+              body: JSON.stringify(addressData),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                showNotification("✅ Endereço salvo com sucesso!", "success");
+                closeAddressModal();
+                loadProfile(); // Recarregar dados
+              } else {
+                throw new Error(result.message);
+              }
+            } else {
+              const data = await response.json();
+              throw new Error(data.message || "Erro ao salvar endereço");
+            }
+          } catch (error) {
+            console.error("Erro ao salvar endereço:", error);
+            showNotification("❌ Erro ao salvar endereço: " + error.message, "error");
+          }
+        });
+
+      // Modal de Senha
+      function openChangePasswordModal() {
+        document.getElementById("password-form").reset();
+        document.getElementById("password-modal").style.display = "flex";
+      }
+
+      function closePasswordModal() {
+        document.getElementById("password-modal").style.display = "none";
+      }
+
+      // Modal de Exclusão
+      function openDeleteAccountModal() {
+        document.getElementById("delete-form").reset();
+        document.getElementById("delete-modal").style.display = "flex";
+      }
+
+      function closeDeleteModal() {
+        document.getElementById("delete-modal").style.display = "none";
+      }
+
+      // Alterar senha
+      document
+        .getElementById("password-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const currentPassword = document.getElementById("current-password").value;
+          const newPassword = document.getElementById("new-password").value;
+          const confirmPassword = document.getElementById("confirm-password").value;
+
+          if (newPassword !== confirmPassword) {
+            showNotification("❌ As senhas não coincidem.", "error");
+            return;
+          }
+
+          try {
+            const response = await fetch(`${window.API_URL}/api/auth/change-password`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${window.authManager.getToken()}`,
+              },
+              body: JSON.stringify({
+                currentPassword,
+                newPassword,
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                showNotification("✅ Senha alterada com sucesso!", "success");
+                closePasswordModal();
+              } else {
+                throw new Error(result.message);
+              }
+            } else {
+              const data = await response.json();
+              throw new Error(data.message || "Erro ao alterar senha");
+            }
+          } catch (error) {
+            console.error("Erro ao alterar senha:", error);
+            showNotification("❌ Erro ao alterar senha: " + error.message, "error");
+          }
+        });
+
+      // Excluir conta
+      document
+        .getElementById("delete-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const email = document.getElementById("confirm-email").value;
+          const password = document.getElementById("confirm-password-delete").value;
+
+          if (!confirm("Tem CERTEZA que deseja excluir sua conta permanentemente? Esta ação NÃO pode ser desfeita!")) {
+            return;
+          }
+
+          try {
+            const response = await fetch(`${window.API_URL}/api/auth/delete-account`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${window.authManager.getToken()}`,
+              },
+              body: JSON.stringify({
+                email,
+                password,
+              }),
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.success) {
+                showNotification("✅ Conta excluída com sucesso.", "success");
+                window.authManager.logout();
+                setTimeout(() => {
+                  window.location.href = "index.html";
+                }, 2000);
+              } else {
+                throw new Error(result.message);
+              }
+            } else {
+              const data = await response.json();
+              throw new Error(data.message || "Erro ao excluir conta");
+            }
+          } catch (error) {
+            console.error("Erro ao excluir conta:", error);
+            showNotification("❌ Erro ao excluir conta: " + error.message, "error");
+          }
+        });
+
+      // Buscar CEP
+      document
+        .getElementById("address-cep")
+        .addEventListener("blur", async function () {
+          const cep = this.value.replace(/\D/g, "");
+          if (cep.length !== 8) return;
+
+          try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const data = await response.json();
+
+            if (!data.erro) {
+              document.getElementById("address-street").value = data.logradouro || "";
+              document.getElementById("address-neighborhood").value = data.bairro || "";
+              document.getElementById("address-city").value = data.localidade || "";
+              document.getElementById("address-state").value = data.uf || "";
+              document.getElementById("address-number").focus();
+            }
+          } catch (error) {
+            console.error("Erro ao buscar CEP:", error);
+          }
+        });
+
+      // Máscaras
+      document
+        .getElementById("edit-phone")
+        .addEventListener("input", function (e) {
+          let value = e.target.value.replace(/\D/g, "");
+          if (value.length > 11) value = value.substring(0, 11);
+
+          if (value.length > 0) {
+            if (value.length <= 2) {
+              value = `(${value}`;
+            } else if (value.length <= 7) {
+              value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
+            } else {
+              value = `(${value.substring(0, 2)}) ${value.substring(2, 7)}-${value.substring(7)}`;
+            }
+          }
+
+          e.target.value = value;
+        });
+
+      document
+        .getElementById("address-cep")
+        .addEventListener("input", function (e) {
+          let value = e.target.value.replace(/\D/g, "");
+          if (value.length > 8) value = value.substring(0, 8);
+
+          if (value.length > 5) {
+            value = `${value.substring(0, 5)}-${value.substring(5)}`;
+          }
+
+          e.target.value = value;
+        });
+
+      // Fechar modais clicando fora
+      document.querySelectorAll(".modal").forEach((modal) => {
+        modal.addEventListener("click", function (e) {
+          if (e.target === this) {
+            this.style.display = "none";
+          }
+        });
+      });
+
+      // Inicializar quando carregar
+      document.addEventListener("DOMContentLoaded", function () {
+        console.log("🚀 Inicializando página de perfil...");
+
+        // Atualizar contador do carrinho
+        if (typeof updateCartCount === "function") {
+          updateCartCount();
+        } else if (window.cartModule && typeof window.cartModule.updateCartCount === "function") {
+          window.cartModule.updateCartCount();
+        } else {
+          console.warn("⚠️ updateCartCount não encontrado");
+        }
+
+        loadProfile();
+      });
+
+      function showNotification(message, type = "success") {
+        // Criar elemento de notificação
+        const notification = document.createElement('div');
+        notification.className = `notification ${type === 'error' ? 'error' : ''}`;
+        notification.textContent = message;
+        
+        // Adicionar ao body
+        document.body.appendChild(notification);
+        
+        // Remover após 5 segundos
+        setTimeout(() => {
+          notification.remove();
+        }, 5000);
+      }
+    </script>
+  </body>
+</html>
